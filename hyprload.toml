@@ -1,0 +1,10 @@
+[borders-plus-plus]
+description ="A plugin to remove XDG_TOPLEVEL_STATE_TILED_* flags from certain windows."
+version = "0.1"
+authors = ["Equaraphanus"]
+
+[borders-plus-plus.build]
+output = "hypruntile.so"
+steps = [
+    "make all",
+]

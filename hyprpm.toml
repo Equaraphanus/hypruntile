@@ -1,0 +1,13 @@
+[repository]
+name = "hypruntile"
+authors = ["Equaraphanus"]
+#commit_pins = [
+#]
+
+[hypruntile]
+description = "A plugin to remove XDG_TOPLEVEL_STATE_TILED_* flags from certain windows."
+authors = ["Equaraphanus"]
+output = "hypruntile.so"
+build = [
+    "make all",
+]
