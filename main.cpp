@@ -1,7 +1,5 @@
 #define WLR_USE_UNSTABLE
 
-#include <ranges>
-
 #include <hyprland/src/Compositor.hpp>
 #include <hyprland/src/desktop/Window.hpp>
 #include <hyprland/src/plugins/PluginAPI.hpp>
@@ -32,7 +30,6 @@ void applyHypruntileRules(CWindow& window) {
         if (!ruleName.starts_with(PLUGIN_NAME ":"))
             continue;
         ruleName.remove_prefix(PLUGIN_NAME ":"sv.length());
-        HyprlandAPI::addNotification(PHANDLE, std::format(MSG_PREFIX "Rule: \"{}\"", ruleName), CHyprColor{0.2, 0.2, 1.0, 1.0}, 5000);
         if (ruleName.starts_with("untile")) {
             untile = true;
         } else if (ruleName.starts_with("unmaximize")) {
@@ -45,20 +42,12 @@ void applyHypruntileRules(CWindow& window) {
 
 void onNewWindow(void* self, std::any data) {
     const auto PWINDOW = std::any_cast<PHLWINDOW>(data);
-    HyprlandAPI::addNotification(PHANDLE, MSG_PREFIX "New window!", CHyprColor{0.2, 0.2, 1.0, 1.0}, 5000);
     applyHypruntileRules(*PWINDOW);
-    auto msg = std::format(MSG_PREFIX "States: {}",
-                           PWINDOW->m_xdgSurface->m_toplevel->m_pendingApply.states | std::views::transform(std::to_underlying<xdgToplevelState>));
-    HyprlandAPI::addNotification(PHANDLE, msg, CHyprColor{0.2, 0.2, 1.0, 1.0}, 5000);
 }
 
 void onWindowRulesUpdated(void* self, std::any data) {
     const auto PWINDOW = std::any_cast<PHLWINDOW>(data);
-    HyprlandAPI::addNotification(PHANDLE, MSG_PREFIX "Rules changed!", CHyprColor{0.2, 0.2, 1.0, 1.0}, 5000);
     applyHypruntileRules(*PWINDOW);
-    auto msg = std::format(MSG_PREFIX "States: {}",
-                           PWINDOW->m_xdgSurface->m_toplevel->m_pendingApply.states | std::views::transform(std::to_underlying<xdgToplevelState>));
-    HyprlandAPI::addNotification(PHANDLE, msg, CHyprColor{0.2, 0.2, 1.0, 1.0}, 5000);
 }
 
 APICALL EXPORT PLUGIN_DESCRIPTION_INFO PLUGIN_INIT(HANDLE handle) {
@@ -92,7 +81,6 @@ APICALL EXPORT void PLUGIN_EXIT() {
     for (auto& w : g_pCompositor->m_windows) {
         if (w->isHidden() || !w->m_isMapped)
             continue;
-        // TODO
         ToplevelUtils::setTiled(*w->m_xdgSurface->m_toplevel, true);
         w->m_xdgSurface->m_toplevel->setMaximized(true);
     }
